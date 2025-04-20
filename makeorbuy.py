@@ -2,7 +2,7 @@ from pulp import LpProblem, LpVariable, LpMinimize, lpSum, LpBinary, value
 
 from pulp import *
 
-# List of components
+# List of components for the baby crib
 components = [
     "Side Rails",
     "Headboard Panel", 
