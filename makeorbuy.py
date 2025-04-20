@@ -2,180 +2,183 @@ from pulp import LpProblem, LpVariable, LpMinimize, lpSum, LpBinary, value
 
 from pulp import *
 
-# Bileşenler (Malzeme listesinden)
+# List of components
 components = [
-    "Yan Korkuluklar",
-    "Başlık Paneli", 
-    "Ayak Paneli",
-    "Alt Destek Platformu",
-    "Yatak",
-    "Yastık",
-    "Yan Koruma Minderi",
-    "Tekerlek (Frenli)",
-    "Alt Ayaklar",
-    "Köşe Koruyucular",
-    "Vida (4x40 mm)",
-    "Vida (4x60 mm)",
-    "Cibinlik (Tüll Kumaş)",
-    "Cibinlik Askı Direği",
-    "Kurulum Kılavuzu"
+    "Side Rails",
+    "Headboard Panel", 
+    "Footboard Panel",
+    "Bottom Support Platform",
+    "Mattress",
+    "Pillow",
+    "Side Protection Cushion",
+    "Wheel (With Brake)",
+    "Bottom Feet",
+    "Corner Protectors",
+    "Screw (4x40 mm)",
+    "Screw (4x60 mm)",
+    "Canopy (Tulle Fabric)",
+    "Canopy Support Rod",
+    "Assembly Manual"
 ]
 
-# Mevcut Durum (Malzeme listesinden)
+# Current decision (Make or Buy)
 current_decision = {
-    "Yan Korkuluklar": "Üretim",
-    "Başlık Paneli": "Üretim", 
-    "Ayak Paneli": "Üretim",
-    "Alt Destek Platformu": "Üretim",
-    "Yatak": "Satın Alma",
-    "Yastık": "Satın Alma",
-    "Yan Koruma Minderi": "Satın Alma",
-    "Tekerlek (Frenli)": "Satın Alma",
-    "Alt Ayaklar": "Üretim",
-    "Köşe Koruyucular": "Satın Alma",
-    "Vida (4x40 mm)": "Satın Alma",
-    "Vida (4x60 mm)": "Satın Alma",
-    "Cibinlik (Tüll Kumaş)": "Satın Alma",
-    "Cibinlik Askı Direği": "Üretim",
-    "Kurulum Kılavuzu": "Üretim"
+    "Side Rails": "Make",
+    "Headboard Panel": "Make", 
+    "Footboard Panel": "Make",
+    "Bottom Support Platform": "Make",
+    "Mattress": "Buy",
+    "Pillow": "Buy",
+    "Side Protection Cushion": "Buy",
+    "Wheel (With Brake)": "Buy",
+    "Bottom Feet": "Make",
+    "Corner Protectors": "Buy",
+    "Screw (4x40 mm)": "Buy",
+    "Screw (4x60 mm)": "Buy",
+    "Canopy (Tulle Fabric)": "Buy",
+    "Canopy Support Rod": "Make",
+    "Assembly Manual": "Make"
 }
 
-# Parametreler
+# Cost of making each component
 make_cost = {
-    "Yan Korkuluklar": 380, 
-    "Başlık Paneli": 260,  
-    "Ayak Paneli": 260, 
-    "Alt Destek Platformu": 220, 
-    "Yatak": 600, 
-    "Yastık": 150, 
-    "Yan Koruma Minderi": 250, 
-    "Tekerlek (Frenli)": 320, 
-    "Alt Ayaklar": 190, 
-    "Köşe Koruyucular": 120, 
-    "Vida (4x40 mm)": 90, 
-    "Vida (4x60 mm)": 105, 
-    "Cibinlik (Tüll Kumaş)": 180, 
-    "Cibinlik Askı Direği": 140, 
-    "Kurulum Kılavuzu": 60 
+    "Side Rails": 380, 
+    "Headboard Panel": 260,  
+    "Footboard Panel": 260, 
+    "Bottom Support Platform": 220, 
+    "Mattress": 600, 
+    "Pillow": 150, 
+    "Side Protection Cushion": 250, 
+    "Wheel (With Brake)": 320, 
+    "Bottom Feet": 190, 
+    "Corner Protectors": 120, 
+    "Screw (4x40 mm)": 90, 
+    "Screw (4x60 mm)": 105, 
+    "Canopy (Tulle Fabric)": 180, 
+    "Canopy Support Rod": 140, 
+    "Assembly Manual": 60 
 }
 
+# Cost of buying each component
 buy_cost = {
-    "Yan Korkuluklar": 550, 
-    "Başlık Paneli": 330,  
-    "Ayak Paneli": 330, 
-    "Alt Destek Platformu": 290, 
-    "Yatak": 450, 
-    "Yastık": 120, 
-    "Yan Koruma Minderi": 200, 
-    "Tekerlek (Frenli)": 250, 
-    "Alt Ayaklar": 280, 
-    "Köşe Koruyucular": 90, 
-    "Vida (4x40 mm)": 60, 
-    "Vida (4x60 mm)": 75, 
-    "Cibinlik (Tüll Kumaş)": 150, 
-    "Cibinlik Askı Direği": 210, 
-    "Kurulum Kılavuzu": 90 
+    "Side Rails": 550, 
+    "Headboard Panel": 330,  
+    "Footboard Panel": 330, 
+    "Bottom Support Platform": 290, 
+    "Mattress": 450, 
+    "Pillow": 120, 
+    "Side Protection Cushion": 200, 
+    "Wheel (With Brake)": 250, 
+    "Bottom Feet": 280, 
+    "Corner Protectors": 90, 
+    "Screw (4x40 mm)": 60, 
+    "Screw (4x60 mm)": 75, 
+    "Canopy (Tulle Fabric)": 150, 
+    "Canopy Support Rod": 210, 
+    "Assembly Manual": 90 
 }
 
+# Maintenance cost per year
 maintenance_cost = {
-    "Yan Korkuluklar": 15,
-    "Başlık Paneli": 10, 
-    "Ayak Paneli": 10,
-    "Alt Destek Platformu": 8,
-    "Yatak": 20,
-    "Yastık": 5,
-    "Yan Koruma Minderi": 10,
-    "Tekerlek (Frenli)": 12,
-    "Alt Ayaklar": 7,
-    "Köşe Koruyucular": 5,
-    "Vida (4x40 mm)": 2,
-    "Vida (4x60 mm)": 2,
-    "Cibinlik (Tüll Kumaş)": 10,
-    "Cibinlik Askı Direği": 5,
-    "Kurulum Kılavuzu": 0
+    "Side Rails": 15,
+    "Headboard Panel": 10, 
+    "Footboard Panel": 10,
+    "Bottom Support Platform": 8,
+    "Mattress": 20,
+    "Pillow": 5,
+    "Side Protection Cushion": 10,
+    "Wheel (With Brake)": 12,
+    "Bottom Feet": 7,
+    "Corner Protectors": 5,
+    "Screw (4x40 mm)": 2,
+    "Screw (4x60 mm)": 2,
+    "Canopy (Tulle Fabric)": 10,
+    "Canopy Support Rod": 5,
+    "Assembly Manual": 0
 }
 
+# Lifespan of each component in years
 lifespan = {
-    "Yan Korkuluklar": 5,
-    "Başlık Paneli": 5, 
-    "Ayak Paneli": 5,
-    "Alt Destek Platformu": 4,
-    "Yatak": 3,
-    "Yastık": 2,
-    "Yan Koruma Minderi": 3,
-    "Tekerlek (Frenli)": 4,
-    "Alt Ayaklar": 5,
-    "Köşe Koruyucular": 3,
-    "Vida (4x40 mm)": 5,
-    "Vida (4x60 mm)": 5,
-    "Cibinlik (Tüll Kumaş)": 2,
-    "Cibinlik Askı Direği": 4,
-    "Kurulum Kılavuzu": 5
+    "Side Rails": 5,
+    "Headboard Panel": 5, 
+    "Footboard Panel": 5,
+    "Bottom Support Platform": 4,
+    "Mattress": 3,
+    "Pillow": 2,
+    "Side Protection Cushion": 3,
+    "Wheel (With Brake)": 4,
+    "Bottom Feet": 5,
+    "Corner Protectors": 3,
+    "Screw (4x40 mm)": 5,
+    "Screw (4x60 mm)": 5,
+    "Canopy (Tulle Fabric)": 2,
+    "Canopy Support Rod": 4,
+    "Assembly Manual": 5
 }
 
+# Renewal cost for each component
 renewal_cost = {
-    "Yan Korkuluklar": 90,
-    "Başlık Paneli": 60, 
-    "Ayak Paneli": 60,
-    "Alt Destek Platformu": 50,
-    "Yatak": 150,
-    "Yastık": 40,
-    "Yan Koruma Minderi": 65,
-    "Tekerlek (Frenli)": 70,
-    "Alt Ayaklar": 45,
-    "Köşe Koruyucular": 25,
-    "Vida (4x40 mm)": 20,
-    "Vida (4x60 mm)": 23,
-    "Cibinlik (Tüll Kumaş)": 45,
-    "Cibinlik Askı Direği": 35,
-    "Kurulum Kılavuzu": 15
+    "Side Rails": 90,
+    "Headboard Panel": 60, 
+    "Footboard Panel": 60,
+    "Bottom Support Platform": 50,
+    "Mattress": 150,
+    "Pillow": 40,
+    "Side Protection Cushion": 65,
+    "Wheel (With Brake)": 70,
+    "Bottom Feet": 45,
+    "Corner Protectors": 25,
+    "Screw (4x40 mm)": 20,
+    "Screw (4x60 mm)": 23,
+    "Canopy (Tulle Fabric)": 45,
+    "Canopy Support Rod": 35,
+    "Assembly Manual": 15
 }
 
+# Failure rate for each component
 failure_rate = {
-    "Yan Korkuluklar": 0.05,
-    "Başlık Paneli": 0.05, 
-    "Ayak Paneli": 0.05,
-    "Alt Destek Platformu": 0.08,
-    "Yatak": 0.12,
-    "Yastık": 0.15,
-    "Yan Koruma Minderi": 0.10,
-    "Tekerlek (Frenli)": 0.10,
-    "Alt Ayaklar": 0.06,
-    "Köşe Koruyucular": 0.10,
-    "Vida (4x40 mm)": 0.02,
-    "Vida (4x60 mm)": 0.02,
-    "Cibinlik (Tüll Kumaş)": 0.15,
-    "Cibinlik Askı Direği": 0.07,
-    "Kurulum Kılavuzu": 0.05
+    "Side Rails": 0.05,
+    "Headboard Panel": 0.05, 
+    "Footboard Panel": 0.05,
+    "Bottom Support Platform": 0.08,
+    "Mattress": 0.12,
+    "Pillow": 0.15,
+    "Side Protection Cushion": 0.10,
+    "Wheel (With Brake)": 0.10,
+    "Bottom Feet": 0.06,
+    "Corner Protectors": 0.10,
+    "Screw (4x40 mm)": 0.02,
+    "Screw (4x60 mm)": 0.02,
+    "Canopy (Tulle Fabric)": 0.15,
+    "Canopy Support Rod": 0.07,
+    "Assembly Manual": 0.05
 }
 
-# Karar değişkenleri (1: Üretim, 0: Satın Alma)
+# Decision variables (1: Make, 0: Buy)
 x = {c: LpVariable(f"x_{c}", cat=LpBinary) for c in components}
 
 # Model
-model = LpProblem("Bebek_Besigi_Make_or_Buy", LpMinimize)
+model = LpProblem("Baby_Crib_Make_or_Buy", LpMinimize)
 
-# Amaç fonksiyonu: Toplam yaşam döngüsü maliyetini minimize et
+# Objective function: Minimize total lifecycle cost
 model += lpSum([
     x[c] * (make_cost[c] + maintenance_cost[c] * lifespan[c] + renewal_cost[c] * failure_rate[c]) +
     (1 - x[c]) * buy_cost[c]
     for c in components
 ])
 
-# Bütçe kısıtlaması (Opsiyonel - varsayılan olarak 1500 TL)
+# Budget constraint
 total_budget = 1500
 model += lpSum([
     x[c] * make_cost[c] + (1 - x[c]) * buy_cost[c]
     for c in components
-]) <= total_budget, "BütçeKısıtlaması"
+]) <= total_budget, "BudgetConstraint"
 
-# Modeli çöz
 model.solve()
 
-# Sonuçları yazdır
-print("BEBEK BEŞİĞİ - MAKE OR BUY ANALİZİ")
+print("BABY CRIB - MAKE OR BUY ANALYSIS")
 print("=" * 60)
-print(f"{'Parça':<25} {'Karar':<15} {'Mevcut Durum':<15} {'Uyumluluk':<15}")
+print(f"{'Component':<25} {'Decision':<15} {'Current Decision':<15} {'Match':<15}")
 print("-" * 60)
 
 total_current_cost = 0
@@ -184,20 +187,20 @@ total_lifecycle_current = 0
 total_lifecycle_optimal = 0
 
 for c in components:
-    decision = "Produce" if x[c].value() == 1 else "Buy"
-    match = "✓" if (decision == "Produce" and current_decision[c] == "Produce") or \
+    decision = "Make" if x[c].value() == 1 else "Buy"
+    match = "✓" if (decision == "Make" and current_decision[c] == "Make") or \
                    (decision == "Buy" and current_decision[c] == "Buy") else "✗"
     
     print(f"{c:<25} {decision:<15} {current_decision[c]:<15} {match:<15}")
     
-    if current_decision[c] == "Produce":
+    if current_decision[c] == "Make":
         current_cost = make_cost[c]
         lifecycle_current = make_cost[c] + maintenance_cost[c] * lifespan[c] + renewal_cost[c] * failure_rate[c]
     else:
         current_cost = buy_cost[c]
         lifecycle_current = buy_cost[c]
     
-    if decision == "Produce":
+    if decision == "Make":
         optimal_cost = make_cost[c]
         lifecycle_optimal = make_cost[c] + maintenance_cost[c] * lifespan[c] + renewal_cost[c] * failure_rate[c]
     else:
@@ -210,17 +213,16 @@ for c in components:
     total_lifecycle_optimal += lifecycle_optimal
 
 print("-" * 60)
-print(f"Toplam Başlangıç Maliyeti (Mevcut): {total_current_cost} TL")
-print(f"Toplam Başlangıç Maliyeti (Optimal): {total_optimal_cost} TL")
-print(f"Toplam Yaşam Döngüsü Maliyeti (Mevcut): {total_lifecycle_current} TL")
-print(f"Toplam Yaşam Döngüsü Maliyeti (Optimal): {total_lifecycle_optimal} TL")
-print(f"Potansiyel Tasarruf (Yaşam Döngüsü): {total_lifecycle_current - total_lifecycle_optimal} TL")
+print(f"Total Initial Cost (Current): {total_current_cost} TL")
+print(f"Total Initial Cost (Optimal): {total_optimal_cost} TL")
+print(f"Total Lifecycle Cost (Current): {total_lifecycle_current} TL")
+print(f"Total Lifecycle Cost (Optimal): {total_lifecycle_optimal} TL")
+print(f"Potential Savings (Lifecycle): {total_lifecycle_current - total_lifecycle_optimal} TL")
 print("=" * 60)
 
-# Duyarlılık Analizi - Kritik parçaları belirle
-print("\nKRİTİK PARÇALAR ANALİZİ")
+print("\nCRITICAL COMPONENTS ANALYSIS")
 print("=" * 60)
-print(f"{'Parça':<25} {'Üretim/Satın Alma Farkı':<25} {'Öneri':<20}")
+print(f"{'Component':<25} {'Make/Buy Difference':<25} {'Recommendation':<20}")
 print("-" * 60)
 
 for c in components:
@@ -228,35 +230,11 @@ for c in components:
     purchase_cost = buy_cost[c]
     difference = manufacture_cost - purchase_cost
     
-    if abs(difference) > 50:  # Önemli maliyet farkı
+    if abs(difference) > 50:  
         if difference > 0:
-            recommendation = "Satın Alma Tercih Edilmeli"
+            recommendation = "Prefer Buying"
         else:
-            recommendation = "Üretim Tercih Edilmeli"
+            recommendation = "Prefer Making"
         print(f"{c:<25} {difference:<25.2f} {recommendation:<20}")
 
 print("=" * 60)
-
-# BEBEK BEŞİĞİ - MAKE OR BUY ANALİZİ
-# ============================================================
-# Parça                     Karar          
-# ------------------------------------------------------------
-# Yan Korkuluklar           Make (Üret)    
-# Başlık Paneli             Make (Üret)    
-# Ayak Paneli               Make (Üret)    
-# Alt Destek Platformu      Make (Üret)    
-# Yatak                     Buy (Satın Al) 
-# Yastık                    Buy (Satın Al) 
-# Yan Koruma Minderi        Buy (Satın Al) 
-# Tekerlek (Frenli)         Buy (Satın Al) 
-# Alt Ayaklar               Make (Üret)    
-# Köşe Koruyucular          Buy (Satın Al) 
-# Vida (4x40 mm)            Buy (Satın Al) 
-# Vida (4x60 mm)            Buy (Satın Al) 
-# Cibinlik (Tüll Kumaş)     Buy (Satın Al) 
-# Cibinlik Askı Direği      Make (Üret)    
-# Kurulum Kılavuzu          Make (Üret)    
-# ------------------------------------------------------------
-# Toplam Başlangıç Maliyeti: 2905.0 TL
-# Toplam Yaşam Döngüsü Maliyeti: 3187.3999999999996 TL
-# ============================================================
