@@ -237,26 +237,3 @@ for c in components:
 
 print("=" * 60)
 
-# BEBEK BEŞİĞİ - MAKE OR BUY ANALİZİ
-# ============================================================
-# Parça                     Karar          
-# ------------------------------------------------------------
-# Yan Korkuluklar           Make (Üret)    
-# Başlık Paneli             Make (Üret)    
-# Ayak Paneli               Make (Üret)    
-# Alt Destek Platformu      Make (Üret)    
-# Yatak                     Buy (Satın Al) 
-# Yastık                    Buy (Satın Al) 
-# Yan Koruma Minderi        Buy (Satın Al) 
-# Tekerlek (Frenli)         Buy (Satın Al) 
-# Alt Ayaklar               Make (Üret)    
-# Köşe Koruyucular          Buy (Satın Al) 
-# Vida (4x40 mm)            Buy (Satın Al) 
-# Vida (4x60 mm)            Buy (Satın Al) 
-# Cibinlik (Tüll Kumaş)     Buy (Satın Al) 
-# Cibinlik Askı Direği      Make (Üret)    
-# Kurulum Kılavuzu          Make (Üret)    
-# ------------------------------------------------------------
-# Toplam Başlangıç Maliyeti: 2905.0 TL
-# Toplam Yaşam Döngüsü Maliyeti: 3187.3999999999996 TL
-# ============================================================
